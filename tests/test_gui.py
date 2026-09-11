@@ -82,3 +82,54 @@ def test_gui_dry_run_end_to_end(tmp_path, monkeypatch):
     assert "DRY" in job.text.upper() or "dry" in job.text, job.text
     assert any("[gui]" in c.value and "pt.run_pt_pipeline" in c.value for c in at.code)
     assert any("finished successfully" in s.value for s in at.success), [w.value for w in at.error]
+
+
+def test_upload_and_results_zip_helpers(tmp_path, monkeypatch):
+    """extract_upload accepts a zipped date folder (with or without a parent) and zip_results
+    packs outputs while leaving raw Harmony inputs out unless asked."""
+    pytest.importorskip("streamlit")
+    import io
+    import zipfile
+    from pt.gui.app import extract_upload, zip_results
+
+    src = tmp_path / "src"
+    _make_demo_tree(src)
+    # zip with a parent folder around the date folders
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        for f in src.rglob("*"):
+            if f.is_file():
+                zf.write(f, arcname=str(Path("Analyzed") / f.relative_to(src)))
+    root = extract_upload(buf.getvalue(), "Analyzed.zip", tmp_path / "ws")
+    assert sorted(p.name for p in root.iterdir()) == ["081825", "082125"]
+
+    # zip of a bare date folder's contents
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        for f in (src / "081825").rglob("*"):
+            if f.is_file():
+                zf.write(f, arcname=str(f.relative_to(src / "081825")))
+    root = extract_upload(buf.getvalue(), "081825.zip", tmp_path / "ws2")
+    assert (root / "081825" / "Analysis").is_dir()
+
+    # results zip: fake an output next to the raw inputs
+    date_dir = root / "081825"
+    (date_dir / "Analysis" / "081825_summary.xlsx").write_bytes(b"x")
+    names = zipfile.ZipFile(io.BytesIO(zip_results(date_dir))).namelist()
+    assert "081825/Analysis/081825_summary.xlsx" in names
+    assert not any(n.endswith("PlateResults.txt") for n in names)
+    names_raw = zipfile.ZipFile(io.BytesIO(zip_results(date_dir, include_raw=True))).namelist()
+    assert any(n.endswith("PlateResults.txt") for n in names_raw)
+
+
+def test_materialize_example_copies_inputs_only(tmp_path):
+    pytest.importorskip("streamlit")
+    from pt.gui.app import EXAMPLE_DATA_DIR, example_dates, materialize_example
+    if not EXAMPLE_DATA_DIR.is_dir():
+        pytest.skip("examples/example_data not present")
+    assert example_dates(), "example date folder should be discoverable"
+    root = materialize_example(tmp_path)
+    files = [f for f in root.rglob("*") if f.is_file()]
+    assert files and all(f.suffix.lower() in {".txt", ".tiff", ".tif"} for f in files)
+    assert any(f.name.startswith("Objects_Population") for f in files)
+    assert not any(f.suffix == ".xlsx" for f in files)

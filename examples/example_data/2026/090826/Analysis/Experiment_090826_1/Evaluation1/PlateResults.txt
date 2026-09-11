@@ -1,0 +1,172 @@
+Database name	PTHTS example
+Database link	local
+Evaluation signature	synthetic-Experiment_090826_1
+Plate Name	Example plate
+Barcode	EXAMPLE-0001
+Measurement	Experiment_090826_1
+Evaluation	Evaluation1
+Export type	PlateResults
+[Data]
+Row	Column	Plane	Timepoint	Time [s]	Number of Analyzed Fields	Height [µm]	Temperature	Target Temperature	CO2	Target CO2	Compound	Concentration	Cell Type	Cells - Number of Objects	Cells - Intensity Cell Alexa 488 Mean - Mean per Well
+2	2	1	1	0.0	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	3787.99
+2	2	1	2	2.1	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	3788.34
+2	2	1	3	4.2	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	3784.49
+2	2	1	4	6.3	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	3784.59
+2	2	1	5	8.4	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	3783.14
+2	2	1	6	10.5	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	3785.13
+2	2	1	7	12.6	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	6293.14
+2	2	1	8	14.7	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	40	5137.9
+2	2	1	9	16.8	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	4857.5
+2	2	1	10	18.9	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	4383.21
+2	2	1	11	21.0	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	4128.35
+2	2	1	12	23.1	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	3978.15
+2	2	1	13	25.2	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	3901.92
+2	2	1	14	27.3	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	40	3846.15
+2	2	1	15	29.4	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	3824.78
+2	2	1	16	31.5	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	3807.9
+2	2	1	17	33.6	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	40	3810.12
+2	2	1	18	35.7	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	39	3805.09
+2	2	1	19	37.8	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	3794.54
+2	2	1	20	39.9	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	40	3786.19
+2	2	1	21	42.0	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	11158.86
+2	2	1	22	44.1	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	12396.71
+2	2	1	23	46.2	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	40	11022.02
+2	2	1	24	48.3	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	9558.29
+2	2	1	25	50.4	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	40	8654.1
+2	2	1	26	52.5	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	7678.36
+2	2	1	27	54.6	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	41	6982.85
+2	3	1	1	0.0	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3512.21
+2	3	1	2	2.1	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3514.55
+2	3	1	3	4.2	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3511.22
+2	3	1	4	6.3	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3510.2
+2	3	1	5	8.4	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3511.02
+2	3	1	6	10.5	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3510.79
+2	3	1	7	12.6	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	5560.63
+2	3	1	8	14.7	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	4631.53
+2	3	1	9	16.8	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	4396.73
+2	3	1	10	18.9	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	4001.34
+2	3	1	11	21.0	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3789.19
+2	3	1	12	23.1	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3666.39
+2	3	1	13	25.2	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3593.61
+2	3	1	14	27.3	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3550.14
+2	3	1	15	29.4	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3527.41
+2	3	1	16	31.5	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	45	3503.23
+2	3	1	17	33.6	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	45	3495.95
+2	3	1	18	35.7	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3497.77
+2	3	1	19	37.8	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	45	3518.54
+2	3	1	20	39.9	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	3495.03
+2	3	1	21	42.0	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	9461.01
+2	3	1	22	44.1	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	10563.46
+2	3	1	23	46.2	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	9357.07
+2	3	1	24	48.3	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	8365.19
+2	3	1	25	50.4	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	45	7620.35
+2	3	1	26	52.5	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	45	6879.62
+2	3	1	27	54.6	2	3.2	37.0	37.0	5.0	5.0	Compound A 10 uM		Example cells	46	6298.01
+2	4	1	1	0.0	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3547.44
+2	4	1	2	2.1	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3546.35
+2	4	1	3	4.2	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3546.28
+2	4	1	4	6.3	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3548.18
+2	4	1	5	8.4	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3549.59
+2	4	1	6	10.5	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3548.34
+2	4	1	7	12.6	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	4458.25
+2	4	1	8	14.7	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	4028.13
+2	4	1	9	16.8	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	49	3925.13
+2	4	1	10	18.9	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3744.64
+2	4	1	11	21.0	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3653.71
+2	4	1	12	23.1	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3600.91
+2	4	1	13	25.2	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3572.67
+2	4	1	14	27.3	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3555.35
+2	4	1	15	29.4	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3546.8
+2	4	1	16	31.5	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3538.54
+2	4	1	17	33.6	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3538.12
+2	4	1	18	35.7	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3537.73
+2	4	1	19	37.8	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	49	3520.96
+2	4	1	20	39.9	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	3532.2
+2	4	1	21	42.0	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	10056.05
+2	4	1	22	44.1	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	49	11075.51
+2	4	1	23	46.2	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	9793.52
+2	4	1	24	48.3	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	49	8779.53
+2	4	1	25	50.4	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	7750.9
+2	4	1	26	52.5	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	49	6925.2
+2	4	1	27	54.6	2	3.2	37.0	37.0	5.0	5.0	Compound A 1 uM		Example cells	50	6383.46
+3	2	1	1	0.0	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3556.26
+3	2	1	2	2.1	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3555.77
+3	2	1	3	4.2	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3551.68
+3	2	1	4	6.3	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3554.24
+3	2	1	5	8.4	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3551.11
+3	2	1	6	10.5	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3547.1
+3	2	1	7	12.6	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3826.58
+3	2	1	8	14.7	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3682.26
+3	2	1	9	16.8	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3641.51
+3	2	1	10	18.9	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3586.59
+3	2	1	11	21.0	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3560.18
+3	2	1	12	23.1	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3546.88
+3	2	1	13	25.2	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3537.53
+3	2	1	14	27.3	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3536.02
+3	2	1	15	29.4	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3529.64
+3	2	1	16	31.5	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3526.88
+3	2	1	17	33.6	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3524.75
+3	2	1	18	35.7	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3524.32
+3	2	1	19	37.8	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3520.92
+3	2	1	20	39.9	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	3518.29
+3	2	1	21	42.0	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	10320.05
+3	2	1	22	44.1	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	11545.88
+3	2	1	23	46.2	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	10149.23
+3	2	1	24	48.3	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	8999.88
+3	2	1	25	50.4	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	8051.77
+3	2	1	26	52.5	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	7275.8
+3	2	1	27	54.6	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	47	6629.36
+3	3	1	1	0.0	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3440.32
+3	3	1	2	2.1	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3437.51
+3	3	1	3	4.2	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3436.48
+3	3	1	4	6.3	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3430.74
+3	3	1	5	8.4	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3432.09
+3	3	1	6	10.5	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3426.28
+3	3	1	7	12.6	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	4090.56
+3	3	1	8	14.7	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3763.65
+3	3	1	9	16.8	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3676.75
+3	3	1	10	18.9	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3555.4
+3	3	1	11	21.0	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3487.1
+3	3	1	12	23.1	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3449.97
+3	3	1	13	25.2	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3432.68
+3	3	1	14	27.3	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3419.7
+3	3	1	15	29.4	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3410.63
+3	3	1	16	31.5	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3404.98
+3	3	1	17	33.6	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3401.89
+3	3	1	18	35.7	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3396.94
+3	3	1	19	37.8	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3395.23
+3	3	1	20	39.9	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	3394.01
+3	3	1	21	42.0	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	9446.48
+3	3	1	22	44.1	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	10544.17
+3	3	1	23	46.2	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	9314.06
+3	3	1	24	48.3	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	8298.65
+3	3	1	25	50.4	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	7458.88
+3	3	1	26	52.5	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	6762.24
+3	3	1	27	54.6	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	48	6189.9
+3	4	1	1	0.0	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3323.89
+3	4	1	2	2.1	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3319.77
+3	4	1	3	4.2	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3315.64
+3	4	1	4	6.3	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3317.39
+3	4	1	5	8.4	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3325.61
+3	4	1	6	10.5	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3327.99
+3	4	1	7	12.6	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3406.32
+3	4	1	8	14.7	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3370.74
+3	4	1	9	16.8	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3361.84
+3	4	1	10	18.9	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3342.78
+3	4	1	11	21.0	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3339.55
+3	4	1	12	23.1	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3337.24
+3	4	1	13	25.2	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3330.57
+3	4	1	14	27.3	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3327.73
+3	4	1	15	29.4	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3324.0
+3	4	1	16	31.5	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3328.74
+3	4	1	17	33.6	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3323.97
+3	4	1	18	35.7	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3325.54
+3	4	1	19	37.8	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3327.5
+3	4	1	20	39.9	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3321.14
+3	4	1	21	42.0	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	4122.64
+3	4	1	22	44.1	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	4284.14
+3	4	1	23	46.2	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	4135.02
+3	4	1	24	48.3	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	4000.09
+3	4	1	25	50.4	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3893.69
+3	4	1	26	52.5	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3798.82
+3	4	1	27	54.6	2	3.2	37.0	37.0	5.0	5.0	Vehicle		Example cells	12	3730.44

@@ -6,6 +6,7 @@ Complete argument reference for all command-line tools in the PTHTS pipeline.
 
 ## Table of Contents
 
+0. [Example data — make_example_data.py](#example-data--toolsmake_example_datapy)
 0. [pt-gui — Graphical Interface](#pt-gui--graphical-interface)
 1. [pt-run — Main Pipeline](#pt-run--main-pipeline)
 2. [run_all_dates.bat — Batch Runner](#run_all_datesbat--batch-runner)
@@ -18,6 +19,30 @@ Complete argument reference for all command-line tools in the PTHTS pipeline.
 9. [build-sample-manifest — Sample Manifest](#build-sample-manifest--sample-manifest)
 10. [build-plate-overview — Plate Overview](#build-plate-overview--plate-overview)
 
+
+---
+
+## Example data — `tools/make_example_data.py`
+
+Writes a small synthetic Harmony export (six wells, 27 timepoints, baseline → Stim 1 → Stim 2) that
+exercises every pipeline step. Nothing in it comes from real measurements.
+
+```bat
+python tools/make_example_data.py                 REM examples/example_data (text exports only)
+python tools/make_example_data.py --with-images   REM also writes tiny TIFF frames for --compute-backgrounds
+python tools/make_example_data.py --out D:\demo --date 010126 --seed 3 --clean
+```
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--out` | `examples/example_data` | Output root; the date folder is written under `<out>/<20YY>/<MMDDYY>`. |
+| `--date` | `090826` | Date code (MMDDYY) for the generated date folder. |
+| `--seed` | `0` | Random seed; the same seed always yields the same files. |
+| `--with-images` | off | Also write synthetic 16-bit TIFF frames named like Phenix exports. |
+| `--image-size` | `64` | Pixel size of the square synthetic frames. |
+| `--clean` | off | Delete the date folder first (removes previous pipeline outputs too). |
+
+Then: `pt-run examples/example_data/2026/090826 --expected-n 27`. See [examples/README.md](../examples/README.md).
 
 ---
 

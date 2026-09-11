@@ -1,0 +1,245 @@
+object,stim1_responder,stim2_responder,dying,bbox,missing_tps,well,condition
+B2_F1_obj1,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj2,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj3,False,False,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj4,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj5,False,False,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj6,True,True,False,huge,[],B2,Compound A 10 uM
+B2_F1_obj7,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj8,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj9,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj10,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj11,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj12,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj13,True,True,False,normal,"[8, 17, 18]",B2,Compound A 10 uM
+B2_F1_obj14,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj15,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj16,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj17,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj18,True,True,False,tiny,[],B2,Compound A 10 uM
+B2_F1_obj19,False,False,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj20,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj21,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F1_obj22,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj1,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj2,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj3,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj4,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj5,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj6,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj7,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj8,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj9,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj10,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj11,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj12,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj13,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj14,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj15,False,False,False,normal,"[23, 25]",B2,Compound A 10 uM
+B2_F2_obj16,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj17,True,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj18,False,True,False,normal,[],B2,Compound A 10 uM
+B2_F2_obj19,True,True,False,normal,"[14, 18, 20]",B2,Compound A 10 uM
+B3_F1_obj1,False,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj2,False,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj3,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj4,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj5,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj6,False,True,False,huge,[],B3,Compound A 10 uM
+B3_F1_obj7,False,False,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj8,False,False,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj9,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj10,False,False,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj11,True,True,True,normal,[],B3,Compound A 10 uM
+B3_F1_obj12,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj13,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj14,False,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj15,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj16,False,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj17,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj18,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj19,False,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj20,False,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj21,False,False,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj22,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj23,False,True,False,normal,[],B3,Compound A 10 uM
+B3_F1_obj24,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj1,False,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj2,False,False,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj3,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj4,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj5,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj6,False,True,False,tiny,[],B3,Compound A 10 uM
+B3_F2_obj7,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj8,False,False,False,normal,"[16, 17, 25]",B3,Compound A 10 uM
+B3_F2_obj9,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj10,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj11,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj12,False,False,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj13,False,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj14,True,True,False,normal,"[19, 26]",B3,Compound A 10 uM
+B3_F2_obj15,False,False,False,tiny,[],B3,Compound A 10 uM
+B3_F2_obj16,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj17,True,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj18,True,True,False,tiny,[],B3,Compound A 10 uM
+B3_F2_obj19,False,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj20,False,True,False,tiny,[],B3,Compound A 10 uM
+B3_F2_obj21,False,True,False,normal,[],B3,Compound A 10 uM
+B3_F2_obj22,True,True,False,normal,[],B3,Compound A 10 uM
+B4_F1_obj1,False,False,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj2,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj3,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj4,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj5,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj6,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj7,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj8,True,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj9,True,True,False,huge,[],B4,Compound A 1 uM
+B4_F1_obj10,False,True,False,normal,"[9, 22]",B4,Compound A 1 uM
+B4_F1_obj11,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj12,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj13,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj14,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj15,False,True,True,normal,[],B4,Compound A 1 uM
+B4_F1_obj16,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj17,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj18,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj19,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj20,True,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj21,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj22,False,False,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj23,True,True,False,normal,[],B4,Compound A 1 uM
+B4_F1_obj24,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj1,True,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj2,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj3,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj4,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj5,True,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj6,False,False,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj7,True,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj8,False,False,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj9,True,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj10,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj11,False,True,False,tiny,[],B4,Compound A 1 uM
+B4_F2_obj12,True,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj13,False,False,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj14,False,True,False,huge,[],B4,Compound A 1 uM
+B4_F2_obj15,False,False,False,normal,[24],B4,Compound A 1 uM
+B4_F2_obj16,False,False,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj17,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj18,False,True,False,normal,"[19, 26]",B4,Compound A 1 uM
+B4_F2_obj19,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj20,True,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj21,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj22,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj23,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj24,False,False,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj25,False,True,False,normal,[],B4,Compound A 1 uM
+B4_F2_obj26,False,True,False,normal,[],B4,Compound A 1 uM
+C2_F1_obj1,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj2,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj3,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj4,True,True,False,normal,[],C2,Vehicle
+C2_F1_obj5,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj6,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj7,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj8,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj9,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj10,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj11,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj12,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj13,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj14,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj15,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj16,False,True,False,huge,[],C2,Vehicle
+C2_F1_obj17,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj18,False,False,False,normal,[],C2,Vehicle
+C2_F1_obj19,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj20,False,True,False,tiny,[],C2,Vehicle
+C2_F1_obj21,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj22,False,True,False,normal,[],C2,Vehicle
+C2_F1_obj23,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj1,False,False,False,normal,[],C2,Vehicle
+C2_F2_obj2,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj3,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj4,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj5,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj6,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj7,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj8,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj9,True,True,False,normal,[],C2,Vehicle
+C2_F2_obj10,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj11,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj12,False,True,True,normal,[],C2,Vehicle
+C2_F2_obj13,False,False,False,normal,[],C2,Vehicle
+C2_F2_obj14,False,False,False,normal,[],C2,Vehicle
+C2_F2_obj15,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj16,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj17,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj18,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj19,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj20,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj21,False,False,False,normal,[],C2,Vehicle
+C2_F2_obj22,False,True,True,normal,[],C2,Vehicle
+C2_F2_obj23,False,True,False,normal,[],C2,Vehicle
+C2_F2_obj24,False,True,False,normal,[],C2,Vehicle
+C3_F1_obj1,False,False,False,normal,[],C3,Vehicle
+C3_F1_obj2,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj3,True,True,False,normal,[],C3,Vehicle
+C3_F1_obj4,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj5,False,True,True,normal,[],C3,Vehicle
+C3_F1_obj6,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj7,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj8,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj9,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj10,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj11,True,True,False,normal,[],C3,Vehicle
+C3_F1_obj12,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj13,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj14,True,True,False,normal,[],C3,Vehicle
+C3_F1_obj15,True,True,False,normal,[],C3,Vehicle
+C3_F1_obj16,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj17,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj18,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj19,False,False,False,normal,[],C3,Vehicle
+C3_F1_obj20,False,False,False,normal,[],C3,Vehicle
+C3_F1_obj21,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj22,False,False,False,normal,[],C3,Vehicle
+C3_F1_obj23,False,True,False,normal,[],C3,Vehicle
+C3_F1_obj24,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj1,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj2,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj3,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj4,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj5,True,True,False,normal,[],C3,Vehicle
+C3_F2_obj6,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj7,False,False,False,normal,[],C3,Vehicle
+C3_F2_obj8,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj9,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj10,False,False,False,normal,[],C3,Vehicle
+C3_F2_obj11,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj12,True,True,False,normal,[],C3,Vehicle
+C3_F2_obj13,True,True,True,normal,[],C3,Vehicle
+C3_F2_obj14,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj15,False,False,False,normal,[],C3,Vehicle
+C3_F2_obj16,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj17,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj18,False,True,False,huge,[],C3,Vehicle
+C3_F2_obj19,False,False,False,normal,[],C3,Vehicle
+C3_F2_obj20,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj21,False,False,True,normal,[],C3,Vehicle
+C3_F2_obj22,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj23,False,True,False,normal,[],C3,Vehicle
+C3_F2_obj24,False,True,False,normal,[],C3,Vehicle
+C4_F1_obj1,False,False,False,normal,[],C4,Vehicle
+C4_F1_obj2,False,True,False,normal,[],C4,Vehicle
+C4_F1_obj3,False,False,False,normal,[],C4,Vehicle
+C4_F1_obj4,False,False,False,normal,[],C4,Vehicle
+C4_F1_obj5,False,False,False,normal,[],C4,Vehicle
+C4_F1_obj6,False,False,False,normal,[],C4,Vehicle
+C4_F2_obj1,False,False,False,normal,[],C4,Vehicle
+C4_F2_obj2,False,False,False,normal,[],C4,Vehicle
+C4_F2_obj3,False,False,False,normal,[],C4,Vehicle
+C4_F2_obj4,False,False,False,normal,[],C4,Vehicle
+C4_F2_obj5,False,False,False,normal,[],C4,Vehicle
+C4_F2_obj6,False,True,False,normal,[],C4,Vehicle

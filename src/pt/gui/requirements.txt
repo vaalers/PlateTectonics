@@ -1,0 +1,18 @@
+# Dependencies for the hosted GUI (Streamlit Community Cloud).
+#
+# Community Cloud looks for a dependency file in the entrypoint's directory before the
+# repository root, and prefers environment.yml over requirements.txt when both sit in the
+# same directory. Keeping this file next to app.py therefore forces a fast pip install
+# instead of a conda solve of the root environment.yml.
+#
+# The pipeline package (src/pt) is not installed here: app.py adds src/ to PYTHONPATH for
+# the commands it launches, so no editable install is required.
+pandas>=2.0
+numpy>=1.24
+openpyxl>=3.1
+xlsxwriter>=3.2
+matplotlib>=3.8
+python-dateutil>=2.8
+python-pptx>=1.0
+Pillow>=10.0
+streamlit>=1.50

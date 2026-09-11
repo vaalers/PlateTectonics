@@ -1,0 +1,13 @@
+# pip requirements for PTHTS (used by Streamlit Community Cloud and by plain-pip installs).
+# Local conda users can keep using environment.yml instead.
+pandas>=2.0
+numpy>=1.24
+openpyxl>=3.1
+xlsxwriter>=3.2
+matplotlib>=3.8
+python-dateutil>=2.8
+python-pptx>=1.0
+Pillow>=10.0
+streamlit>=1.50
+# the pipeline itself (src/pt), installed from this checkout
+-e .

@@ -205,7 +205,8 @@ def main():
 
             obj_tp_flag = ""
             if "timepoint_flag" in g.columns:
-                fv = g["timepoint_flag"].replace("", np.nan).dropna()
+                fv = g["timepoint_flag"].dropna()
+                fv = fv[fv.astype(str).str.strip() != ""]
                 if not fv.empty:
                     obj_tp_flag = str(fv.iloc[0]).strip()
 

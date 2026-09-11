@@ -9,15 +9,20 @@ into a terminal or a batch file.
 """
 from __future__ import annotations
 
+import io
 import json
 import os
 import re
 import shlex
+import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 import threading
 import time
+import uuid
+import zipfile
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -36,6 +41,15 @@ EXP_RE = re.compile(r"^Experiment_\d{6}_\d+$", re.I)
 EVAL_RE = re.compile(r"^Evaluation[ _]?\d+$", re.I)
 IMG_EXTS = {".png", ".jpg", ".jpeg"}
 LOG_TAIL_LINES = 500
+
+# Repository layout: <repo>/src/pt/gui/app.py
+SRC_DIR = Path(__file__).resolve().parents[2]
+REPO_DIR = SRC_DIR.parent
+EXAMPLE_DATA_DIR = REPO_DIR / "examples" / "example_data"
+# Streamlit Community Cloud mounts repositories under /mount/src; treat that as "hosted".
+IS_HOSTED = str(Path(__file__).resolve()).startswith("/mount/src") or bool(os.environ.get("PTHTS_HOSTED"))
+WORKSPACE_ROOT = Path(os.environ.get("PTHTS_WORKSPACE") or (Path(tempfile.gettempdir()) / "pthts_workspace"))
+RAW_INPUT_SUFFIXES = {".txt", ".tiff", ".tif"}
 
 DEFAULT_OPTIONS = {
     # analysis
@@ -156,6 +170,7 @@ def start_job(cmd: list[str], label: str, cwd: Optional[str] = None, context: Op
         popen_kwargs["start_new_session"] = True
     env = dict(os.environ)
     env.setdefault("PYTHONUNBUFFERED", "1")
+    env["PYTHONPATH"] = os.pathsep.join(x for x in [str(SRC_DIR), env.get("PYTHONPATH", "")] if x)
     proc = subprocess.Popen(
         cmd,
         cwd=cwd or None,
@@ -268,6 +283,105 @@ def path_or_none(text: str) -> Optional[Path]:
     return Path(text).expanduser() if text else None
 
 
+def session_workspace() -> Path:
+    """Per-browser-session scratch folder for uploads and example runs."""
+    if "workspace_id" not in st.session_state:
+        st.session_state["workspace_id"] = uuid.uuid4().hex[:12]
+    ws = WORKSPACE_ROOT / st.session_state["workspace_id"]
+    ws.mkdir(parents=True, exist_ok=True)
+    return ws
+
+
+def find_date_root(folder: Path) -> Optional[Path]:
+    """Return the folder that directly contains MMDDYY date folders, searching a few levels down."""
+    for cand in [folder, *sorted(p for p in folder.rglob("*") if p.is_dir())]:
+        try:
+            rel_depth = len(cand.relative_to(folder).parts)
+        except ValueError:
+            continue
+        if rel_depth > 4:
+            continue
+        if any(d.is_dir() and DATE_RE.match(d.name) for d in cand.iterdir()):
+            return cand
+    return None
+
+
+def extract_upload(data: bytes, name: str, dest: Path) -> Path:
+    """Unpack an uploaded .zip into dest/<name> and return the folder holding date folders.
+
+    The zip may contain a single date folder (081825/...), several date folders, or a
+    parent folder around them; any of those layouts is accepted.
+    """
+    target = dest / re.sub(r"[^\w.-]+", "_", Path(name).stem)
+    if target.exists():
+        shutil.rmtree(target)
+    target.mkdir(parents=True)
+    with zipfile.ZipFile(io.BytesIO(data)) as zf:
+        for member in zf.infolist():
+            # skip macOS metadata and refuse paths that escape the target
+            if member.filename.startswith("__MACOSX") or "/." in f"/{member.filename}":
+                continue
+            out = (target / member.filename).resolve()
+            if target.resolve() not in out.parents and out != target.resolve():
+                continue
+            if member.is_dir():
+                out.mkdir(parents=True, exist_ok=True)
+            else:
+                out.parent.mkdir(parents=True, exist_ok=True)
+                with zf.open(member) as src, open(out, "wb") as dst:
+                    shutil.copyfileobj(src, dst)
+    root = find_date_root(target)
+    if root is None:
+        # a bare date folder was zipped without its parent: wrap it
+        if DATE_RE.match(Path(name).stem):
+            wrapped = target.parent / f"{target.name}_root" / Path(name).stem
+            wrapped.parent.mkdir(exist_ok=True)
+            if wrapped.exists():
+                shutil.rmtree(wrapped)
+            shutil.move(str(target), str(wrapped))
+            return wrapped.parent
+        raise ValueError("No MMDDYY date folder with an Analysis/Experiment_* subfolder was found in the zip.")
+    return root
+
+
+def example_dates() -> list[Path]:
+    if not EXAMPLE_DATA_DIR.is_dir():
+        return []
+    return sorted(p for p in EXAMPLE_DATA_DIR.rglob("*") if p.is_dir() and DATE_RE.match(p.name)
+                  and (p / "Analysis").is_dir())
+
+
+def materialize_example(dest: Path) -> Path:
+    """Copy only the raw inputs of the bundled example dataset (text exports and TIFF frames)
+    into dest/example/<MMDDYY>, so each run starts from a clean, unanalyzed copy."""
+    root = dest / "example"
+    if root.exists():
+        shutil.rmtree(root)
+    for date_dir in example_dates():
+        for f in date_dir.rglob("*"):
+            if f.is_file() and f.suffix.lower() in RAW_INPUT_SUFFIXES:
+                out = root / date_dir.name / f.relative_to(date_dir)
+                out.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(f, out)
+    return root
+
+
+def zip_results(date_dir: Path, include_raw: bool = False) -> bytes:
+    """Zip a date folder's pipeline outputs (raw Harmony text exports and images excluded unless asked)."""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        for f in sorted(date_dir.rglob("*")):
+            if not f.is_file() or f.name.startswith("~$"):
+                continue
+            if not include_raw and f.suffix.lower() in RAW_INPUT_SUFFIXES and f.suffix.lower() != ".txt":
+                continue
+            if not include_raw and f.suffix.lower() == ".txt" and (
+                f.name.startswith(("PlateResults", "Objects_Population")) or f.name == "indexfile.txt"):
+                continue
+            zf.write(f, arcname=str(Path(date_dir.name) / f.relative_to(date_dir)))
+    return buf.getvalue()
+
+
 @st.cache_data(ttl=20, show_spinner=False)
 def scan_root(root: str) -> list[dict]:
     rootp = Path(root)
@@ -371,19 +485,63 @@ def page_run() -> None:
 
     # ---- data selection
     st.subheader("1. Data")
-    col_a, col_b = st.columns([4, 1])
-    root_text = col_a.text_input(
-        "Analyzed data root (the folder that contains 6-digit MMDDYY date folders)",
-        value=s.get("analyzed_root", ""),
-        placeholder=r"e.g. D:\PhenixData\Analyzed  or  /Volumes/data/Analyzed",
-    )
-    if col_b.button("Rescan", width="stretch"):
-        scan_root.clear()
-    root = path_or_none(root_text)
+    if IS_HOSTED:
+        st.info("This is a hosted copy: it cannot see folders on your computer. Upload a zipped date folder "
+                "or try the built-in example, then download the results from the **Results** section. "
+                "For large or routine work, install PTHTS locally and run `pt-gui` there.", icon="☁️")
+    sources = ["Upload a zipped date folder", "Built-in example dataset", "Folder on this computer"]
+    if not IS_HOSTED:
+        sources = sources[::-1]
+    if not example_dates():
+        sources.remove("Built-in example dataset")
+    source = st.radio("Data source", sources, horizontal=True, key="data_source")
+
+    root: Optional[Path] = None
+    if source == "Folder on this computer":
+        col_a, col_b = st.columns([4, 1])
+        root_text = col_a.text_input(
+            "Analyzed data root (the folder that contains 6-digit MMDDYY date folders)",
+            value=s.get("analyzed_root", ""),
+            placeholder=r"e.g. D:\PhenixData\Analyzed  or  /Volumes/data/Analyzed",
+        )
+        if col_b.button("Rescan", width="stretch"):
+            scan_root.clear()
+        root = path_or_none(root_text)
+    elif source == "Upload a zipped date folder":
+        st.caption("Zip a date folder (e.g. `081825/Analysis/Experiment_081825_1/Evaluation1/*.txt`) and upload it. "
+                   "Several date folders in one zip are fine.")
+        up = st.file_uploader("Zip file", type=["zip"], key="upload_zip")
+        if up is not None:
+            marker = (up.name, up.size)
+            if st.session_state.get("upload_marker") != marker:
+                with st.spinner("Unpacking…"):
+                    try:
+                        st.session_state["upload_root"] = str(extract_upload(up.getvalue(), up.name, session_workspace() / "uploads"))
+                        st.session_state["upload_marker"] = marker
+                        scan_root.clear()
+                    except Exception as exc:
+                        st.session_state.pop("upload_root", None)
+                        st.error(f"Could not use this zip: {exc}")
+            if st.session_state.get("upload_root"):
+                root = Path(st.session_state["upload_root"])
+                st.success(f"Unpacked **{up.name}**")
+    else:  # example dataset
+        st.caption("A small synthetic Harmony export bundled with PTHTS (no real measurements). "
+                   "Each click makes a fresh, unanalyzed copy.")
+        if st.button("Prepare example dataset") or st.session_state.get("example_root"):
+            if not st.session_state.get("example_root") or st.button("Reset example copy"):
+                with st.spinner("Copying example inputs…"):
+                    st.session_state["example_root"] = str(materialize_example(session_workspace()))
+                    scan_root.clear()
+            root = Path(st.session_state["example_root"])
+            if int(saved.get("expected_n", 0)) != 27 and int(saved.get("min_n", 0)) == 0:
+                st.caption("Tip: the example has 27 timepoints per object; set *Expected timepoints* to 27 "
+                           "(or *Minimum timepoints* to 20).")
     selected_paths: list[str] = []
     if root and root.is_dir():
-        if s.get("analyzed_root") != str(root):
+        if source == "Folder on this computer" and s.get("analyzed_root") != str(root):
             remember(analyzed_root=str(root))
+        st.session_state["active_root"] = str(root)
         rows = scan_root(str(root))
         if rows:
             df = pd.DataFrame(rows).drop(columns=["path"])
@@ -514,12 +672,14 @@ def page_run() -> None:
 def page_results() -> None:
     st.title("Results")
     s = settings()
-    root_text = st.text_input("Analyzed data root", value=s.get("analyzed_root", ""))
+    active = st.session_state.get("active_root") or ("" if IS_HOSTED else s.get("analyzed_root", ""))
+    root_text = st.text_input("Analyzed data root", value=active,
+                              help="Pre-filled with the folder used in the last run (uploaded or example data included).")
     root = path_or_none(root_text)
     if not (root and root.is_dir()):
-        st.info("Enter the folder that contains your date folders.")
+        st.info("Enter the folder that contains your date folders, or run the pipeline first.")
         return
-    if s.get("analyzed_root") != str(root):
+    if not IS_HOSTED and not str(root).startswith(str(WORKSPACE_ROOT)) and s.get("analyzed_root") != str(root):
         remember(analyzed_root=str(root))
     dates = [d for d in sorted(root.iterdir()) if d.is_dir() and DATE_RE.match(d.name)]
     if not dates:
@@ -527,6 +687,15 @@ def page_results() -> None:
         return
     c1, c2, c3 = st.columns(3)
     date_dir = c1.selectbox("Date", dates, format_func=lambda p: p.name, index=len(dates) - 1)
+    with st.expander("Download all results for this date as a zip"):
+        include_raw = st.checkbox("Include raw inputs (Harmony text exports, images)", value=False)
+        if st.button("Build zip"):
+            with st.spinner("Zipping…"):
+                st.session_state["results_zip"] = (date_dir.name, zip_results(date_dir, include_raw))
+        rz = st.session_state.get("results_zip")
+        if rz and rz[0] == date_dir.name:
+            st.download_button(f"Download {rz[0]}_results.zip ({len(rz[1]) / 1e6:.1f} MB)", data=rz[1],
+                               file_name=f"{rz[0]}_results.zip", mime="application/zip")
     exps = list_experiments(date_dir)
     exp_dir = c2.selectbox("Experiment", exps, format_func=lambda p: p.name) if exps else None
     evals = list_evaluations(exp_dir) if exp_dir else []
@@ -749,6 +918,12 @@ def page_help() -> None:
 | Date-level summaries | `<date>/Analysis/*.xlsx` |
 | Pipeline log | `<date>/run_pt_pipeline_<timestamp>.log` |
 
+**Hosted vs. local**
+
+- Hosted on Streamlit Community Cloud, the app runs on Streamlit's servers: upload a zipped date folder (or use
+  the example), run, then download the results zip. Uploads and results are temporary and private to your browser session.
+- Installed locally (`pt-gui`), the app reads and writes your own folders directly and there is no size limit.
+
 **Tips**
 
 - Every page shows the exact command it runs, so anything you do here can be scripted later.
@@ -781,8 +956,11 @@ def main() -> None:
             else:
                 st.error(f"{job.label} {'stopped' if job.stopped else 'failed'}", icon="❌")
         st.divider()
-        st.caption(f"Python: `{sys.executable}`")
-        st.caption(f"Settings: `{SETTINGS_PATH}`")
+        if IS_HOSTED:
+            st.caption("Hosted copy — upload data, run, download results.")
+        else:
+            st.caption(f"Python: `{sys.executable}`")
+            st.caption(f"Settings: `{SETTINGS_PATH}`")
 
     {
         "Run pipeline": page_run,

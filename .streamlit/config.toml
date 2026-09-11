@@ -1,0 +1,10 @@
+[server]
+# Zipped date folders can be large; raise the upload ceiling (MB).
+maxUploadSize = 2048
+headless = true
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "light"
