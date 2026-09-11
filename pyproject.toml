@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pt-pipeline"
+version = "0.1.0"
+description = "PTHTS (PlateTectonics HTS): Opera Phenix / Harmony exports → per-object F/F0, QC filtering, plots and summaries"
+requires-python = ">=3.10"
+readme = "README.md"
+dependencies = [
+  "pandas>=2.0",
+  "numpy>=1.24",
+  "openpyxl>=3.1",
+  "xlsxwriter>=3.2",     # optional, useful for styled Excel
+  "matplotlib>=3.8",
+  "python-dateutil>=2.8",
+  "python-pptx>=1.0",
+  "Pillow>=10.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+pt-run = "pt.run_pt_pipeline:main"
+pt-gui = "pt.gui.launch:main"
+pt-reorg = "pt.phenix_reorg:main"
+phenix-to-xlsx-batch = "pt.phenix_to_xlsx_batch:main"
+detect-stim-times = "pt.detect_stim_times:main"
+per_object_ff0 = "pt.per_object_ff0:main"
+filter-post-stats = "pt.filter_post_stats:main"
+spaghetti_plot_per_well = "pt.spaghetti_plot_per_well:main"
+spaghetti-plot-filtered = "pt.spaghetti_plot_filtered:main"
+responder-bar-charts = "pt.responder_bar_charts:main"
+combine-date-summaries = "pt.combine_date_summaries:main"
+compute-fov-background = "pt.compute_fov_background:main"
+compute-fov-background-avg = "pt.compute_fov_background_avg:main"
+background-method-report = "pt.background_method_report:main"
+build-sample-manifest = "pt.build_plate_manifest:main"
+build-plate-overview = "pt.build_plate_overview:main"
+build-powerbi-report-data = "pt.build_powerbi_report_data:main"
+build-heatmap-pptx = "pt.build_heatmap_pptx:main"
+
+
+# ---- Dev tooling (optional but recommended) ----
+[project.optional-dependencies]
+gui = ["streamlit>=1.50"]
+dev = ["pytest>=8.2", "ruff>=0.6", "black>=24.8.0", "mypy>=1.11", "streamlit>=1.50"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
+select = ["E","F","I","UP"]        # pyflakes/pep8/imports/pyupgrade
+ignore = []
+extend-exclude = ["data", "Analysis"]
+
+[tool.ruff.per-file-ignores]
+"tests/*" = ["E501"]               # allow long test strings
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true

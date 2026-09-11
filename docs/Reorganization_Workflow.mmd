@@ -1,0 +1,81 @@
+flowchart TD
+  %% phenix_reorg.py — High-level flow
+  %% ========== CLI & Setup ==========
+  A0([Start])
+  A1["Parse CLI args\n--root, --dates | --all-dates\n--apply, --overwrite\n--mirror-root\n--name-template\n--well-source {filename|indexfile}\n--roi-mode {sibling|subdir}\n--no-scan-all-img-dirs\n--consolidate-roi-siblings"]
+  A2{Root exists?}
+  A3{Have --dates OR --all-dates?}
+  A4["Find date folders\n(e.g., 081825) under --root"]
+  A5{Any matching date folders?}
+  A0-->A1-->A2
+  A2-- No -->X1[[Exit: Root not found]]
+  A2-- Yes -->A3
+  A3-- No -->X2[[Exit: Specify --dates ... or --all-dates]]
+  A3-- Yes -->A4-->A5
+  A5-- No -->X3[[Exit: No matching date folders found]]
+  A5-- Yes -->L0["[overall_log = []]"]
+  %% ========== Per-Date Loop ==========
+  subgraph S["For each date_dir (e.g., 082825)"]
+    direction TB
+    S0["Log: === DATE {date6} ==="]
+
+    %% A) Normalize experiment names under Analysis
+    A10["Find 'Analysis/' subdirs\nmatching raw Opera names\n(prefix__YYYY-mm-ddTHH_MM_SS-Measurement…)"]
+    A11["Sort by timestamp; rename to\nAnalysis/Experiment_{date6}_{i}\n(dry-run unless --apply)"]
+    A12{"--mirror-root?"}
+    A13["Similarly rename raw experiments at\ndate root to Experiment_{date6}_{i}"]
+
+    %% B) Map GUID ROI folders to experiments via indexfile.txt
+    B0["For each Analysis/Experiment_{date6}_*"]
+    B1{"indexfile.txt exists?"}
+    B2["Extract GUIDs from 'URL' column\n(e.g., /C/<GUID>/)"]
+    B3[Find GUID dirs anywhere under date_dir:\n- exact <GUID>\n- split siblings <GUID>_B11 etc.]
+    B4["Move each matched GUID dir to\nExperiment_*_ROI_Images[_{##}] or\npreserve suffix “…_B11” → “_ROI_Images_B11”\n(--overwrite honored)"]
+
+    %% C) Split ROI dirs into per-well folders
+    C0[For each Experiment_*_ROI_Images*]
+    C1{--well-source = filename?}
+    C2["Split by TIFF filenames →\nper-well bins using row/col parsed from name\n(mode --roi-mode:\n• sibling: “…_E11” next to dir\n• subdir: “…/E11” inside dir)"]
+    C3["Split by indexfile.txt mapping →\nrename by --name-template\n(e.g., R{row}C{col}_F{field}T{timepoint}P{plane}_{channel}.tiff)"]
+
+    %% D) Recursively split ALL image dirs (optional)
+    D0{--no-scan-all-img-dirs?}
+    D1["collect_image_dirs():\nFind any TIFF-holding dirs OUTSIDE Analysis,\nprefer Experiment_*/Images, skip:\n• well bins (B11, …_B11)\n• raw GUID dirs\n• ROI roots"]
+    D2["Split each found dir into per-well bins\n(using filename parser; --roi-mode applies)"]
+
+    %% E) Optional consolidation of ROI siblings
+    E0{--consolidate-roi-siblings?}
+    E1[Move “…_ROI_Images_B11” siblings\ninto “…_ROI_Images/B11” then remove siblings]
+
+    S0-->A10-->A11-->A12
+    A12-- Yes -->A13
+    A12-- No -->B0
+    A13-->B0
+
+    B0-->B1
+    B1-- No -->C0
+    B1-- Yes -->B2-->B3-->B4-->C0
+
+    C0-->C1
+    C1-- Yes -->C2-->D0
+    C1-- No -->C3-->D0
+
+    D0-- Yes (skip) -->E0
+    D0-- No -->D1-->D2-->E0
+
+    E0-- Yes -->E1-->Z0[Append actions to overall_log]
+    E0-- No -->Z0
+  end
+
+  %% ========== Wrap-up ==========
+  W0["Print header `[APPLY|DRY-RUN] PLAN / LOG`"]
+  W1[Print joined overall_log]
+  W2([End])
+
+  L0-->S-->W0-->W1-->W2
+
+  %% ========== Notes (implicit behaviors) ==========
+  %% - ensure_move / ensure_move_file: honors --apply and --overwrite; uniquifies if needed
+  %% - Filename parser accepts: R..C.., A1/A01, etc.
+  %% - If ROI split used indexfile: builds filenames from template & metadata
+  %% - Empty sources may be removed after moves

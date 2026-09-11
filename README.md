@@ -1,2 +1,334 @@
-# PlateTectonics
+# PTHTS — PlateTectonics High-Throughput Screening Pipeline
 
+PTHTS turns Opera Phenix / Harmony text exports from a 96-well imaging experiment into per-object
+fluorescence traces (F/F0), responder calls, quality-filtered workbooks, plots, and per-date summaries.
+
+It is instrument-oriented rather than assay-oriented: any Harmony analysis that exports a
+`PlateResults.txt` and an `Objects_Population - <name>.txt` per evaluation can be processed. Stimulus
+timing, background estimation, baseline windows, QC thresholds and plotting are all configurable.
+
+**What it does, in order**
+
+1. Convert Harmony `.txt` exports into a per-well Excel workbook.
+2. Detect stimulus timepoints (or accept them on the command line).
+3. Compute per-object background-corrected F/F0, response statistics and responder flags.
+4. Apply post-analysis QC rules and write a filtered workbook.
+5. Draw per-object traces, per-well "spaghetti" overlays, and responder bar charts.
+6. Merge every experiment on a date into date-level summary workbooks.
+
+---
+
+## Prerequisites
+
+- **Conda** (Anaconda or Miniconda)
+- **Python 3.10+**
+
+## Setup
+
+```bash
+git clone https://github.com/<your-org>/PTHTS.git
+cd PTHTS
+conda env create -f environment.yml
+conda activate pt-py310
+pip install -e .
+```
+
+Verify:
+
+```bash
+python -c "import pt; print('OK')"
+pt-run --help
+```
+
+---
+
+## Expected Data Structure
+
+The pipeline expects data organized under 6-digit date folders (`MMDDYY`):
+
+```
+<root>/
+└── 081825/
+    └── Analysis/
+        ├── Experiment_081825_1/
+        │   ├── indexfile.txt                       (optional; used for stim-time detection)
+        │   ├── Evaluation1/
+        │   │   ├── PlateResults*.txt
+        │   │   └── Objects_Population - <population>.txt
+        │   └── Evaluation2/
+        │       └── ...
+        └── Experiment_081825_2/
+            └── ...
+```
+
+`<population>` is whatever you named the object population in your Harmony analysis sequence. If an
+evaluation exports several populations, pick one with `--objects-population <substring>` (or set the
+`PT_OBJECTS_POPULATION` environment variable).
+
+If your raw Harmony export folders are not yet in this structure, run `pt-reorg` first. It renames
+`<name>__<timestamp>-Measurement N` folders to `Experiment_<MMDDYY>_<n>`, maps ROI image folders via
+`indexfile.txt`, and splits image folders into per-well bins. See the
+[CLI Reference](docs/cli_reference.md#pt-reorg--folder-reorganization).
+
+---
+
+## Adapting the Pipeline to Your Harmony Export
+
+| What varies between labs | Where to set it |
+|---|---|
+| Object population name | `--objects-population` on `pt-run`, or `--population` on `phenix-to-xlsx-batch` |
+| Per-object intensity column | Auto-detected: an `Intensity ... Mean` column is renamed to `Intensity`. Per-well means and counts are never chosen. |
+| Number of timepoints | `--expected-n` / `--min-n` (default 27) |
+| Stimulus timepoints | Detected from `indexfile.txt` sequences, or fixed with `--stim` (and `--stim2`) |
+| Baseline window | `--baseline-n` (last N timepoints before Stim 1) |
+| Imaging channel for background | `--background-channel "<channel name>"` |
+| Raw image location (for FOV backgrounds) | `--raw-data-root <folder holding 20YY/MMDDYY>` |
+| Responder thresholds, plot y-limits | See [CLI Reference](docs/cli_reference.md) |
+
+The defaults reflect a three-phase acquisition (baseline → Stim 1 → Stim 2) where Stim 2 is a
+positive control. Nothing in the code depends on a particular cell type, compound, or sample naming.
+
+---
+
+## Graphical Interface
+
+For people who prefer not to use a terminal, `pt-gui` opens a local web app (Streamlit) in the browser:
+
+```bat
+conda activate pt-py310
+pt-gui
+```
+
+or double-click `run_gui.bat` (Windows) / run `./run_gui.sh` (macOS, Linux). The app runs only on your
+machine; nothing is uploaded anywhere.
+
+The interface has six sections:
+
+| Section | What it does |
+|---|---|
+| **Run pipeline** | Point at the folder holding your `MMDDYY` date folders, tick the dates to process, adjust options in plain-language form, press *Run*, and watch the live log. |
+| **Results** | Browse spaghetti plots and facet pages, open any output workbook sheet as a table, and read pipeline logs with error lines highlighted. |
+| **Reorganize raw data** | Run `pt-reorg` with a dry-run preview before applying. |
+| **Sample manifest** | Run `build-sample-manifest`. |
+| **Plate overview** | Run `build-plate-overview`. |
+| **Help** | Workflow summary and output locations. |
+
+Every page shows the exact command it is about to run, so anything done in the GUI can be copied into a
+script later. Folder choices and the last options used are remembered per user in `~/.pthts/gui_settings.json`.
+
+If you installed with `pip` rather than `environment.yml`, add the GUI dependency with `pip install -e ".[gui]"`.
+
+---
+
+## Running the Pipeline
+
+### Single date
+
+```bat
+conda activate pt-py310
+pt-run "D:\PhenixData\Analyzed\081825"
+```
+
+### All dates under a folder (Windows)
+
+```bat
+run_all_dates.bat "D:\PhenixData\Analyzed"
+run_all_dates.bat "D:\PhenixData\Analyzed" --no-phenix --min-n 18
+```
+
+Extra arguments are forwarded to every `pt-run` call.
+
+### macOS / Linux wrapper
+
+```bash
+./run_pt_pipeline.sh /data/PhenixData/Analyzed/081825
+```
+
+---
+
+## Pipeline Steps
+
+| Step | Tool | Description |
+|------|------|-------------|
+| 1 | `phenix-to-xlsx-batch` | Converts raw Harmony `.txt` exports to per-well Excel workbooks |
+| 2 | `per_object_ff0` | Computes per-object F/F0 with IQR filtering and background correction |
+| 3 | `filter-post-stats` | Applies QC rules to produce `_filtered_objects.xlsx` |
+| 4 | `spaghetti_plot_per_well` | Generates per-well spaghetti plots (raw and filtered variants) |
+| 5 | `combine-date-summaries` | Merges all experiment summaries into date-level workbooks |
+
+Steps can be skipped individually with `--no-phenix`, `--no-ff0`, `--no-spaghetti`,
+`--no-combine-date-summaries`.
+
+---
+
+## Output Structure
+
+```
+081825/
+└── Analysis/
+    └── Experiment_081825_1/
+        └── Evaluation1/
+            ├── Experiment_081825_1_Evaluation1_per-well.xlsx
+            ├── Experiment_081825_1_Evaluation1_filtered_objects.xlsx
+            └── plots/
+                ├── combined traces/
+                │   └── *.png  (spaghetti plots)
+                ├── mean traces/
+                └── individual traces/
+                    ├── *_with_obj.xlsx  (augmented F/F0 workbook)
+                    ├── *_page_*.png     (faceted trace pages)
+                    └── *.pptx
+```
+
+| File | Contents |
+|------|----------|
+| `*_per-well.xlsx` | Raw per-well summary from the Harmony export |
+| `*_with_obj.xlsx` | Augmented workbook with `F_corr`, `F_over_F0`, per-object stats and responder flags |
+| `*_filtered_objects.xlsx` | QC-filtered subset of `_with_obj.xlsx` |
+| `plots/combined traces/*.png` | Spaghetti plots per well |
+| `*.pptx` | PowerPoint with one slide per facet page |
+| `run_pt_pipeline_<timestamp>.log` | Full pipeline log (written into the date folder) |
+
+---
+
+## Common Options
+
+```bat
+REM Dry run - show commands without executing
+pt-run "D:\PhenixData\Analyzed\081825" --dry-run
+
+REM Skip Excel generation (already done)
+pt-run "D:\PhenixData\Analyzed\081825" --no-phenix
+
+REM Relaxed timepoint filter (accept any object with >= 18 timepoints)
+pt-run "D:\PhenixData\Analyzed\081825" --min-n 18
+
+REM Fixed stimulus timepoint and y-axis
+pt-run "D:\PhenixData\Analyzed\081825" --stim 15 --ylim -0.5 10.0
+
+REM Compute FOV-specific backgrounds from raw images before analysis
+pt-run "D:\PhenixData\Analyzed\081825" --compute-backgrounds --raw-data-root "D:\PhenixData\Raw" --background-channel "Alexa 488"
+
+REM Use a previously computed background CSV
+pt-run "D:\PhenixData\Analyzed\081825" --background-csv "081825_fov_backgrounds_avg.csv"
+
+REM Choose the Harmony population when several were exported
+pt-run "D:\PhenixData\Analyzed\081825" --objects-population "Nuclei"
+
+REM Reorganize raw export folders before running
+pt-run "D:\PhenixData\Analyzed\081825" --reorg-first --reorg-apply --reorg-all-dates
+```
+
+For the full argument reference see [docs/cli_reference.md](docs/cli_reference.md).
+
+---
+
+## Additional Tools
+
+These run independently of the main pipeline:
+
+| Command | Description |
+|---------|-------------|
+| `pt-gui` | Launch the graphical interface (see above) |
+| `pt-reorg` | Normalize raw Harmony export folders into the expected layout |
+| `build-sample-manifest` | Build a consolidated sample manifest from plate-layout workbooks and pipeline outputs |
+| `build-plate-overview` | Generate a color-coded 96-well overview sheet from a plate-layout workbook |
+| `build-powerbi-report-data` | Export Power BI-ready tables from analyzed folders and the manifest |
+| `background-method-report` | Compare background estimation methods across a date |
+| `compute-fov-background`, `compute-fov-background-avg` | Standalone FOV background estimation from raw images |
+| `build-heatmap-pptx` | Collect responder heatmap PNGs into a PowerPoint deck |
+| `run_build_sample_manifest.bat` | Windows wrapper for `build-sample-manifest` |
+
+---
+
+## Documentation
+
+| Document | Audience |
+|---|---|
+| [docs/cli_reference.md](docs/cli_reference.md) | Every command-line option |
+| [docs/filtering_criteria_expert.md](docs/filtering_criteria_expert.md) | Filtering logic and equations, for imaging scientists |
+| [docs/filtering_criteria_layperson.md](docs/filtering_criteria_layperson.md) | Same content in plain language |
+| [docs/filtering_criteria_by_script.md](docs/filtering_criteria_by_script.md) | Filters and math grouped by script, with code pointers |
+| [docs/Background_Correction_SOP.md](docs/Background_Correction_SOP.md) | Background estimation and subtraction procedure |
+| [docs/powerbi_report.md](docs/powerbi_report.md) | Power BI export tables and model |
+| [docs/Reorganization_Workflow.mmd](docs/Reorganization_Workflow.mmd) | Mermaid flowchart of `pt-reorg` |
+| [CONDA_SETUP.md](CONDA_SETUP.md) | Environment setup notes |
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| `conda: command not found` | Open Anaconda Prompt or add conda to PATH |
+| `No module named 'pt'` | `conda activate pt-py310`, then `pip install -e .` |
+| `File is not a zip file` | Corrupted `.xlsx` — delete it and re-run |
+| No experiments found | Check that the path contains an `Analysis/Experiment_*` subfolder |
+| `[MISS] ... lacks PlateResults/Objects files` | Export both `PlateResults` and an `Objects_Population` table from Harmony |
+| No `Intensity` column found | Make sure the Harmony objects export includes a per-object mean intensity readout |
+| Slow on network or cloud-synced folders | Copy data locally first; use `--verbose` to see progress |
+| Wrong timepoint count filtered | Use `--min-n <value>` instead of `--expected-n` |
+
+Re-create the environment:
+
+```bat
+conda env remove -n pt-py310
+conda env create -f environment.yml
+conda activate pt-py310
+pip install -e .
+```
+
+---
+
+## Repository Layout
+
+```
+PTHTS/
+├── README.md
+├── CONDA_SETUP.md
+├── environment.yml
+├── pyproject.toml
+├── run_all_dates.bat              # Batch-process all date folders under a root (Windows)
+├── run_build_sample_manifest.bat  # Manifest wrapper (Windows)
+├── run_pt_pipeline.sh             # Pipeline wrapper (macOS/Linux)
+├── run_gui.bat / run_gui.sh       # Launch the graphical interface
+├── docs/                          # See "Documentation"
+├── tests/                         # Smoke tests (imports, --help)
+├── tools/generate_pt_equations_docx.py
+└── src/pt/
+    ├── run_pt_pipeline.py            # Main orchestrator (pt-run)
+    ├── phenix_reorg.py               # Raw export folder reorganization (pt-reorg)
+    ├── phenix_to_xlsx_batch.py       # Harmony .txt → per-well Excel
+    ├── detect_stim_times.py          # Stimulus timepoint detection
+    ├── per_object_ff0.py             # Per-object F/F0 analysis
+    ├── per_object_ff0_plots.py       # Faceted per-object trace pages
+    ├── filter_post_stats.py          # Post-analysis QC filtering
+    ├── spaghetti_plot_per_well.py    # Per-well spaghetti plots
+    ├── spaghetti_plot_filtered.py    # Spaghetti plots with extra trace criteria
+    ├── responder_bar_charts.py       # Responder percentage bar charts
+    ├── combine_date_summaries.py     # Merge experiment summaries per date
+    ├── compute_fov_background.py     # FOV background (per-image statistics)
+    ├── compute_fov_background_avg.py # FOV background (averaged + smoothed mode)
+    ├── background_method_report.py   # Compare background methods
+    ├── build_plate_manifest.py       # Sample manifest builder
+    ├── build_plate_overview.py       # 96-well plate overview sheet
+    ├── build_powerbi_report_data.py  # Power BI export
+    ├── build_heatmap_pptx.py         # Heatmap PNGs → PPTX
+    ├── phenix_to_xlsx.py             # Legacy single-plate converter
+    ├── phenix_plots_from_xlsx.py     # Average-trace plots from a per-well workbook
+    ├── create_example_plots.py       # Synthetic example charts
+    ├── gui/                          # Streamlit interface (pt-gui)
+    ├── pt_tokenize.py                # Tokenizer utilities for layout text
+    └── pt_utils.py                   # Shared helpers (palette, column matching, well parsing)
+```
+
+## Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| `pandas`, `numpy` | Data manipulation and numerics |
+| `openpyxl`, `xlsxwriter` | Excel read/write |
+| `matplotlib`, `Pillow` | Plotting and image handling |
+| `python-pptx` | PowerPoint export |
+| `python-dateutil` | Date parsing |
+| `streamlit` | Graphical interface (`pt-gui`) |
