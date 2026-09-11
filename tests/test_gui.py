@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pytest
@@ -67,8 +68,16 @@ def test_gui_dry_run_end_to_end(tmp_path, monkeypatch):
     next(b for b in at.button if b.label == "Select all").click().run()
     assert sorted(lab.split()[0] for lab in at.session_state["date_multiselect"]) == ["081825", "082125"]
     next(c for c in at.checkbox if c.label.startswith("Dry run")).check().run()
+    # Background correction is required: without a source the run button stays disabled.
+    run_btn = next(b for b in at.button if "Run pipeline" in b.label)
+    assert run_btn.disabled, "run must be blocked until a background source is valid"
+    bg_csv = tmp_path / "bg.csv"
+    bg_csv.write_text("well,field,sequence,background\n")
+    at.radio(key="background_mode_radio").set_value("csv").run()
+    next(t for t in at.text_input if t.label.startswith("Background CSV file")).set_value(str(bg_csv)).run()
     cmd_preview = next(c.value for c in at.code if "pt.run_pt_pipeline" in c.value)
     assert "--dry-run" in cmd_preview and "081825" in cmd_preview and "082125" in cmd_preview
+    assert "--background-csv" in cmd_preview and "--compute-backgrounds" not in cmd_preview
 
     next(b for b in at.button if "Run pipeline" in b.label).click().run()
     job = at.session_state["job"]
@@ -129,7 +138,8 @@ def test_materialize_example_copies_inputs_only(tmp_path):
         pytest.skip("examples/example_data not present")
     assert example_dates(), "example date folder should be discoverable"
     root = materialize_example(tmp_path)
+    assert re.fullmatch(r"20\d\d", root.name), "returns the <20YY> folder that holds the date folder"
     files = [f for f in root.rglob("*") if f.is_file()]
-    assert files and all(f.suffix.lower() in {".txt", ".tiff", ".tif"} for f in files)
+    assert files and all(f.suffix.lower() in {".txt", ".tiff", ".tif", ".csv"} for f in files)
     assert any(f.name.startswith("Objects_Population") for f in files)
     assert not any(f.suffix == ".xlsx" for f in files)

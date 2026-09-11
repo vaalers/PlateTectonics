@@ -123,7 +123,7 @@ The interface has six sections:
 
 | Section | What it does |
 |---|---|
-| **Run pipeline** | Point at the folder holding your `MMDDYY` date folders, tick the dates to process, adjust options in plain-language form, press *Run*, and watch the live log. |
+| **Run pipeline** | Point at the folder holding your `MMDDYY` date folders, tick the dates to process, choose where background values come from (raw images, an existing CSV, or one already in the date folder), adjust options in plain-language form, press *Run*, and watch the live log. Required fields are marked with `*` and validated before the run button is enabled. |
 | **Results** | Browse spaghetti plots and facet pages, open any output workbook sheet as a table, and read pipeline logs with error lines highlighted. |
 | **Reorganize raw data** | Run `pt-reorg` with a dry-run preview before applying. |
 | **Sample manifest** | Run `build-sample-manifest`. |

@@ -46,6 +46,8 @@ LOG_TAIL_LINES = 500
 SRC_DIR = Path(__file__).resolve().parents[2]
 REPO_DIR = SRC_DIR.parent
 EXAMPLE_DATA_DIR = REPO_DIR / "examples" / "example_data"
+EXAMPLE_GENERATOR = REPO_DIR / "tools" / "make_example_data.py"
+EXAMPLE_CHANNEL = "Alexa 488"
 # Streamlit Community Cloud mounts repositories under /mount/src; treat that as "hosted".
 IS_HOSTED = str(Path(__file__).resolve()).startswith("/mount/src") or bool(os.environ.get("PTHTS_HOSTED"))
 WORKSPACE_ROOT = Path(os.environ.get("PTHTS_WORKSPACE") or (Path(tempfile.gettempdir()) / "pthts_workspace"))
@@ -76,6 +78,7 @@ DEFAULT_OPTIONS = {
     "background_channel": "",
     "background_timepoints": 20,
     "background_csv": "",
+    "background_mode": "compute",   # compute | csv | auto
     # advanced
     "objects_population": "",
     "threads": 4,
@@ -352,18 +355,70 @@ def example_dates() -> list[Path]:
 
 
 def materialize_example(dest: Path) -> Path:
-    """Copy only the raw inputs of the bundled example dataset (text exports and TIFF frames)
-    into dest/example/<MMDDYY>, so each run starts from a clean, unanalyzed copy."""
+    """Create a fresh, unanalyzed copy of the example dataset under dest/example/<20YY>/<MMDDYY>.
+
+    Prefers regenerating it with tools/make_example_data.py (which also writes the synthetic TIFF
+    frames needed for background computation); falls back to copying the committed text inputs.
+    Returns the folder that directly contains the date folder(s), i.e. dest/example/<20YY>.
+    The raw-image root for --compute-backgrounds is its parent (dest/example).
+    """
     root = dest / "example"
     if root.exists():
         shutil.rmtree(root)
+    if EXAMPLE_GENERATOR.is_file():
+        r = subprocess.run([sys.executable, str(EXAMPLE_GENERATOR), "--out", str(root), "--with-images"],
+                           capture_output=True, text=True)
+        years = sorted(p for p in root.iterdir() if p.is_dir() and re.fullmatch(r"20\d\d", p.name)) if root.is_dir() else []
+        if r.returncode == 0 and years:
+            return years[0]
     for date_dir in example_dates():
+        year = f"20{date_dir.name[-2:]}"
         for f in date_dir.rglob("*"):
-            if f.is_file() and f.suffix.lower() in RAW_INPUT_SUFFIXES:
-                out = root / date_dir.name / f.relative_to(date_dir)
+            if f.is_file() and f.suffix.lower() in RAW_INPUT_SUFFIXES | {".csv"}:
+                out = root / year / date_dir.name / f.relative_to(date_dir)
                 out.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(f, out)
-    return root
+    years = sorted(p for p in root.iterdir() if p.is_dir()) if root.is_dir() else []
+    return years[0] if years else root
+
+
+def suggest_raw_root(analyzed_root: Optional[Path]) -> str:
+    """If the analyzed root is a <20YY> folder whose date folders carry Experiment_*/Images,
+    the raw-image root the pipeline expects (<raw>/<20YY>/<MMDDYY>) is its parent."""
+    if analyzed_root is None or not re.fullmatch(r"20\d\d", analyzed_root.name):
+        return ""
+    for d in analyzed_root.iterdir():
+        if d.is_dir() and DATE_RE.match(d.name) and any(d.glob("Experiment_*/Images")):
+            return str(analyzed_root.parent)
+    return ""
+
+
+def background_problems(mode: str, o: dict, selected_paths: list[str]) -> list[str]:
+    """Return human-readable reasons the background choice cannot work for the selected dates."""
+    problems: list[str] = []
+    dates = [Path(p) for p in selected_paths]
+    if mode == "compute":
+        raw = (o.get("raw_data_root") or "").strip()
+        if not raw:
+            return ["Enter the raw image root (the folder that contains <20YY>/<MMDDYY>/Experiment_*/Images)."]
+        rawp = path_or_none(raw)
+        if rawp is None or not rawp.is_dir():
+            return [f"Raw image root not found: {raw}"]
+        for d in dates:
+            if DATE_RE.match(d.name) and not (rawp / f"20{d.name[-2:]}" / d.name).is_dir():
+                problems.append(f"No raw images for {d.name}: expected {rawp / ('20' + d.name[-2:]) / d.name}")
+    elif mode == "csv":
+        csv = (o.get("background_csv") or "").strip()
+        if not csv:
+            return ["Enter the path of the background CSV file."]
+        cp = path_or_none(csv)
+        if cp is None or not cp.is_file():
+            problems.append(f"Background CSV not found: {csv}")
+    else:  # auto
+        for d in dates:
+            if DATE_RE.match(d.name) and not (d / f"{d.name}_fov_backgrounds_avg.csv").is_file():
+                problems.append(f"{d.name}: no {d.name}_fov_backgrounds_avg.csv in the date folder")
+    return problems
 
 
 def zip_results(date_dir: Path, include_raw: bool = False) -> bytes:
@@ -500,7 +555,7 @@ def page_run() -> None:
     if source == "Folder on this computer":
         col_a, col_b = st.columns([4, 1])
         root_text = col_a.text_input(
-            "Analyzed data root (the folder that contains 6-digit MMDDYY date folders)",
+            "Analyzed data root * (the folder that contains 6-digit MMDDYY date folders)",
             value=s.get("analyzed_root", ""),
             placeholder=r"e.g. D:\PhenixData\Analyzed  or  /Volumes/data/Analyzed",
         )
@@ -510,7 +565,7 @@ def page_run() -> None:
     elif source == "Upload a zipped date folder":
         st.caption("Zip a date folder (e.g. `081825/Analysis/Experiment_081825_1/Evaluation1/*.txt`) and upload it. "
                    "Several date folders in one zip are fine.")
-        up = st.file_uploader("Zip file", type=["zip"], key="upload_zip")
+        up = st.file_uploader("Zip file *", type=["zip"], key="upload_zip")
         if up is not None:
             marker = (up.name, up.size)
             if st.session_state.get("upload_marker") != marker:
@@ -530,13 +585,14 @@ def page_run() -> None:
                    "Each click makes a fresh, unanalyzed copy.")
         if st.button("Prepare example dataset") or st.session_state.get("example_root"):
             if not st.session_state.get("example_root") or st.button("Reset example copy"):
-                with st.spinner("Copying example inputs…"):
+                with st.spinner("Generating example dataset…"):
                     st.session_state["example_root"] = str(materialize_example(session_workspace()))
                     scan_root.clear()
             root = Path(st.session_state["example_root"])
             if int(saved.get("expected_n", 0)) != 27 and int(saved.get("min_n", 0)) == 0:
                 st.caption("Tip: the example has 27 timepoints per object; set *Expected timepoints* to 27 "
-                           "(or *Minimum timepoints* to 20).")
+                           "(or *Minimum timepoints* to 20). Its raw frames and channel name are filled in "
+                           "under *Background correction*.")
     selected_paths: list[str] = []
     if root and root.is_dir():
         if source == "Folder on this computer" and s.get("analyzed_root") != str(root):
@@ -553,7 +609,7 @@ def page_run() -> None:
                 st.session_state[key] = [lab for lab, p in labels.items()
                                          if Path(p).name in s.get("last_dates", [])]
             st.session_state[key] = [lab for lab in st.session_state[key] if lab in labels]
-            chosen = st.multiselect("Date folders to process", options=list(labels), key=key)
+            chosen = st.multiselect("Date folders to process *", options=list(labels), key=key)
             selected_paths = [labels[c] for c in chosen]
             c1, c2, _ = st.columns([1, 1, 4])
             c1.button("Select all", on_click=lambda: st.session_state.update({key: list(labels)}))
@@ -576,6 +632,7 @@ def page_run() -> None:
 
     # ---- options
     st.subheader("2. Options")
+    st.caption("Fields marked with * are required. Sections containing required fields are expanded.")
     o = dict(saved)
     with st.expander("Analysis parameters", expanded=True):
         c1, c2, c3, c4 = st.columns(4)
@@ -606,20 +663,51 @@ def page_run() -> None:
         o["no_spaghetti"] = c2.checkbox("Skip spaghetti plots (--no-spaghetti)", value=bool(saved["no_spaghetti"]))
         o["no_combine"] = c2.checkbox("Skip date summaries (--no-combine-date-summaries)", value=bool(saved["no_combine"]))
 
-    with st.expander("Background correction"):
-        o["compute_backgrounds"] = st.checkbox("Compute FOV backgrounds from raw images (--compute-backgrounds)",
-                                               value=bool(saved["compute_backgrounds"]))
-        c1, c2 = st.columns([3, 1])
-        o["raw_data_root"] = c1.text_input("Raw image root (contains 20YY/MMDDYY folders)", value=saved["raw_data_root"],
-                                           disabled=not o["compute_backgrounds"])
-        o["background_timepoints"] = c2.number_input("Timepoints per phase", min_value=1,
-                                                     value=int(saved["background_timepoints"]),
-                                                     disabled=not o["compute_backgrounds"])
-        o["background_channel"] = st.text_input("Channel name filter (e.g. 'Alexa 488')", value=saved["background_channel"],
-                                                disabled=not o["compute_backgrounds"])
-        o["background_csv"] = st.text_input("Existing background CSV (skips computation)", value=saved["background_csv"])
-        if o["compute_backgrounds"] and not o["raw_data_root"].strip():
-            st.warning("A raw image root is required to compute backgrounds.")
+    with st.expander("Background correction *", expanded=True):
+        st.caption("Every run needs per-field background values. Choose where they come from.")
+        mode_labels = {
+            "compute": "Compute from raw images (recommended)",
+            "csv": "Use an existing background CSV file",
+            "auto": "Already in the date folder (<date>_fov_backgrounds_avg.csv from a previous run)",
+        }
+        saved_mode = saved.get("background_mode", "compute")
+        if saved_mode not in mode_labels:
+            saved_mode = "compute"
+        mode = st.radio("Background source *", list(mode_labels), index=list(mode_labels).index(saved_mode),
+                        format_func=lambda k: mode_labels[k], key="background_mode_radio")
+        o["background_mode"] = mode
+        o["compute_backgrounds"] = mode == "compute"
+        if mode != "csv":
+            o["background_csv"] = ""
+        if mode == "compute":
+            # Widgets are keyed per data source so that uploaded/example data can pre-fill them
+            # without clobbering what the user typed for a local folder. A new suggestion (e.g. after
+            # preparing the example) is pushed into the widget state explicitly.
+            raw_key, chan_key = f"raw_root_{source}", f"bg_channel_{source}"
+            suggested = suggest_raw_root(root) if source != "Folder on this computer" else ""
+            if suggested and st.session_state.get(f"{raw_key}_suggested") != suggested:
+                st.session_state[raw_key] = suggested
+                st.session_state[f"{raw_key}_suggested"] = suggested
+            st.session_state.setdefault(raw_key, saved["raw_data_root"])
+            chan_default = EXAMPLE_CHANNEL if source == "Built-in example dataset" else saved["background_channel"]
+            if chan_key not in st.session_state or (source == "Built-in example dataset" and not st.session_state[chan_key]):
+                st.session_state[chan_key] = chan_default
+            c1, c2 = st.columns([3, 1])
+            o["raw_data_root"] = c1.text_input(
+                "Raw image root * (folder containing <20YY>/<MMDDYY>/Experiment_*/Images)", key=raw_key,
+                help="The pipeline looks for <raw root>/<20YY>/<MMDDYY>, e.g. D:\\PhenixData\\Raw\\2025\\081825.")
+            o["background_timepoints"] = c2.number_input("Timepoints per phase", min_value=1,
+                                                         value=int(saved["background_timepoints"]))
+            o["background_channel"] = st.text_input(
+                "Channel name filter (recommended when several channels were acquired, e.g. 'Alexa 488')",
+                key=chan_key)
+        elif mode == "csv":
+            o["background_csv"] = st.text_input("Background CSV file *", value=saved["background_csv"],
+                                                placeholder="…/081825_fov_backgrounds_avg.csv")
+        problems = background_problems(mode, o, selected_paths) if selected_paths else []
+        bg_ok = not problems
+        for msg in problems:
+            st.error(msg, icon="⚠️")
 
     with st.expander("Advanced"):
         c1, c2, c3 = st.columns(3)
@@ -639,9 +727,11 @@ def page_run() -> None:
     cmd = build_pipeline_cmd(selected_paths or ["<date folder>"], o)
     st.code(shlex.join(cmd), language="bash")
     job = current_job()
-    disabled = (not selected_paths) or (job is not None and job.running)
+    disabled = (not selected_paths) or (not bg_ok) or (job is not None and job.running)
     if not selected_paths:
         st.caption("Select at least one date folder to enable the run button.")
+    elif not bg_ok:
+        st.caption("Fix the background-correction settings above to enable the run button.")
     if st.button("▶ Run pipeline", type="primary", disabled=disabled):
         remember(pipeline_options=o, last_dates=[Path(p).name for p in selected_paths])
         start_job(cmd, label="Pipeline", cwd=str(root) if root and root.is_dir() else None,

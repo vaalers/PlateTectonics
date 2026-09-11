@@ -59,6 +59,10 @@ pt-gui --server.port 8502
 Any arguments are passed to `streamlit run`. `run_gui.bat` / `run_gui.sh` launch it inside the
 `pt-py310` environment. The GUI always displays the equivalent command line before running it.
 
+Unlike the bare `pt-run` command, the GUI treats background correction as required: a run must either
+compute backgrounds from raw images (`--compute-backgrounds --raw-data-root …`), name an existing CSV
+(`--background-csv`), or use a `<date>_fov_backgrounds_avg.csv` already present in each selected date folder.
+
 ---
 
 ## pt-run — Main Pipeline
